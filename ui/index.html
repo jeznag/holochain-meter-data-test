@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/meterData.js"></script>
+  </head>
+  <body>
+    <div id="worlds">
+    </div>
+    <form>
+      <label for="world">World</label>
+      <br />
+      <input type="text" id="world" size="50" placeholder="The world to which you're saying hello" />
+      <br />
+      <label for="entry">Entry</label>
+      <br />
+      <input type="text" id="holoWorldEntry" size="50" placeholder="This text will be saved in Holochain" />
+      <button type="submit" id="submitEntry">Submit</button>
+    </form>
+
+    <form>
+      <p>Press the Read button and the hash key will be used to retrieve the entry</p>
+      <table id="entries">
+        <thead>
+          <tr>
+            <th>World</th>
+            <th>Hash</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </form>
+
+    <script type="text/javascript">
+      function updateWorlds() {
+        holoWorldsGetAll((data) => {
+          const worldsContainer = document.querySelector('#worlds');
+          const parsedData  = JSON.parse(data || '[]');
+          worldsContainer.innerHTML = parsedData.map(datum =>
+            `<button data-world-hash="${datum.Hash}" data-world-name="${datum.Tag}">View messages for ${datum.Tag}</button>`
+          ).join('<br />');
+          worldsContainer.querySelectorAll('[data-world-hash]').forEach((worldButton) => {
+            worldButton.addEventListener('click', (e) => {
+              const worldName = e.target.getAttribute('data-world-name');
+              document.querySelector('#entries tbody').innerHTML = '';
+              holoWorldEntryGetAll(worldName, (entries) => {
+                entries.forEach((entry) => {
+                  addNewRow(worldName, entry.Hash);
+                })
+              });
+            });
+          })
+        });
+      }
+
+      updateWorlds();
+
+      document.querySelector('#world').addEventListener('change', function (e) {
+        const world = e.target.value;
+        holoWorldAddWorld(world, (data) => {
+          // update list of worlds
+          updateWorlds();
+        });
+      });
+
+      document.querySelector('#submitEntry').addEventListener("click", function(event) {
+          event.preventDefault();
+          processAddNewEntry(event);
+      });
+
+      function processAddNewEntry(event) {
+        const entryInput = document.querySelector('#holoWorldEntry');
+        const worldInput = document.querySelector('#world');
+        holoWorldEntryCreate(entryInput.value, worldInput.value, function (hash) {
+          addNewRow(worldInput.value, hash)
+        });
+      }
+
+      function addNewRow(worldValue, hash) {
+
+        const table = document.querySelector('#entries tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${worldValue}</td>
+            <td>
+              <input type="text" data-type="hash" size="80" value="${hash}" />
+            </td>
+            <td>
+              <input type="text" data-type="entryContent" size="90" />
+              <button type="submit">Read</button>
+            </td>
+          `;
+        table.appendChild(newRow);
+
+        const hashInput = newRow.querySelector('[data-type="hash"]');
+
+        newRow.querySelector('[type="submit"]').addEventListener("click", function (event) {
+          event.preventDefault();
+          const parent = event.target.parentElement.parentElement;
+          holoWorldEntryRead(parent.querySelector('[data-type="hash"]').value, function (task) {
+            parent.querySelector('[data-type="entryContent"]').value = `${task.content} - ${task.timestamp}`;
+          })
+        });
+      }
+  </script>
+  </body>
+</html>

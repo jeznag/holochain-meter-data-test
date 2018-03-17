@@ -1,0 +1,16 @@
+{
+  "title": "Meter Data Schema",
+  "type": "object",
+  "properties": {
+    "power_consumed_kwh": {
+      "type": "number"
+    },
+    "meter_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  },
+  "required": ["power_consumed_kwh", "timestamp"]
+}

@@ -1,0 +1,63 @@
+{
+    "Version": 1,
+    "UUID": "89138f9a-43e8-431d-b3de-8ec4ed32b6ad",
+    "Name": "MeterData",
+    "Properties": {
+        "description": "Decentralised meter data storage",
+        "language": "en"
+    },
+    "PropertiesSchemaFile": "properties_schema.json",
+    "BasedOn": {
+        "H": null
+    },
+    "Zomes": [
+        {
+            "Name": "MeterDataStorage",
+            "Description": "",
+            "CodeFile": "MeterDataStorage.js",
+            "Entries": [
+                {
+                    "Name": "meter_data",
+                    "DataFormat": "json",
+                    "SchemaFile": "meter_data_schema.json",
+                    "Sharing": "private"
+                }
+            ],
+            "RibosomeType": "js",
+            "Functions": [
+                {
+                    "Name": "meterDataCreate",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                },
+                {
+                    "Name": "meterDataRead",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                },
+                {
+                    "Name": "meter_Create",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                },
+                {
+                    "Name": "meter_Read",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                }
+            ],
+            "BridgeFuncs": null,
+            "BridgeTo": "",
+            "Config": null
+        }
+    ],
+    "RequiresVersion": 0,
+    "DHTConfig": {
+        "HashType": "sha2-256",
+        "NeighborhoodSize": 0
+    },
+    "Progenitor": {
+        "Identity": "",
+        "PubKey": null
+    }
+}
