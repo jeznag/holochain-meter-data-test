@@ -8,7 +8,9 @@ This repo contains code for testing query performance with large holochain datas
 
 3. In another terminal, run `node generate-meter-data.js`
 
-4. Use Postman or similar to make a POST request with this payload:
+4. Wait > 10 seconds for meter data to populate (it will take 1.5hrs to commit all of the 270k data points)
+
+5. Use Postman or similar to make a POST request with this payload:
 
 ```
 {
@@ -19,3 +21,7 @@ This repo contains code for testing query performance with large holochain datas
 ```
 
 to this URL: `http://localhost:5090/fn/MeterDataStorage/meterDataRead`
+
+6. Observe query performance. 
+
+7. Wait a bit longer (allowing more meter data to be added) and try querying again.
