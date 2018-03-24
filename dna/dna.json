@@ -1,63 +1,105 @@
 {
-    "Version": 1,
-    "UUID": "89138f9a-43e8-431d-b3de-8ec4ed32b6ad",
-    "Name": "MeterData",
-    "Properties": {
-        "description": "Decentralised meter data storage",
-        "language": "en"
-    },
-    "PropertiesSchemaFile": "properties_schema.json",
-    "BasedOn": {
-        "H": null
-    },
-    "Zomes": [
+  "Version": 1,
+  "UUID": "89138f9a-43e8-431d-b3de-8ec4ed32b6ad",
+  "Name": "MeterData",
+  "Properties": {
+    "description": "Decentralised meter data storage",
+    "language": "en"
+  },
+  "PropertiesSchemaFile": "properties_schema.json",
+  "BasedOn": {
+    "H": null
+  },
+  "Zomes": [
+    {
+      "Name": "MeterDataStorage",
+      "Description": "",
+      "CodeFile": "MeterDataStorage.js",
+      "Entries": [
         {
-            "Name": "MeterDataStorage",
-            "Description": "",
-            "CodeFile": "MeterDataStorage.js",
-            "Entries": [
-                {
-                    "Name": "meter_data",
-                    "DataFormat": "json",
-                    "SchemaFile": "meter_data_schema.json",
-                    "Sharing": "private"
-                }
-            ],
-            "RibosomeType": "js",
-            "Functions": [
-                {
-                    "Name": "meterDataCreate",
-                    "CallingType": "json",
-                    "Exposure": "public"
-                },
-                {
-                    "Name": "meterDataRead",
-                    "CallingType": "json",
-                    "Exposure": "public"
-                },
-                {
-                    "Name": "meter_Create",
-                    "CallingType": "json",
-                    "Exposure": "public"
-                },
-                {
-                    "Name": "meter_Read",
-                    "CallingType": "json",
-                    "Exposure": "public"
-                }
-            ],
-            "BridgeFuncs": null,
-            "BridgeTo": "",
-            "Config": null
+          "Name": "meter_data",
+          "DataFormat": "json",
+          "SchemaFile": "meter_data_schema.json",
+          "Sharing": "public"
+        },
+        {
+          "Name": "meter_to_meter_data_link",
+          "DataFormat": "links"
         }
-    ],
-    "RequiresVersion": 0,
-    "DHTConfig": {
-        "HashType": "sha2-256",
-        "NeighborhoodSize": 0
+      ],
+      "RibosomeType": "js",
+      "Functions": [
+        {
+          "Name": "meterDataCreate",
+          "CallingType": "json",
+          "Exposure": "public"
+        },
+        {
+          "Name": "meterDataRead",
+          "CallingType": "json",
+          "Exposure": "public"
+        },
+        {
+          "Name": "meter_Create",
+          "CallingType": "json",
+          "Exposure": "public"
+        },
+        {
+          "Name": "meter_Read",
+          "CallingType": "json",
+          "Exposure": "public"
+        }
+      ],
+      "BridgeFuncs": null,
+      "BridgeTo": "",
+      "Config": null
     },
-    "Progenitor": {
-        "Identity": "",
-        "PubKey": null
+    {
+      "Name": "anchors",
+      "Description": "anchors mixin",
+      "RibosomeType": "js",
+      "CodeFile": "anchors.js",
+      "Config": {
+        "ErrorHandling": "returnErrorValue"
+      },
+      "Entries": [
+        {
+          "Name": "anchor",
+          "DataFormat": "json",
+          "SchemaFile": "anchor.json",
+          "Sharing": "public"
+        },
+        {
+          "Name": "anchor_link",
+          "DataFormat": "links"
+        }
+      ],
+      "Functions": [
+        {
+          "Name": "anchor",
+          "CallingType": "json",
+          "Exposure": "public"
+        },
+        {
+          "Name": "exists",
+          "CallingType": "json",
+          "Exposure": "public"
+        },
+        {
+          "Name": "anchors",
+          "CallingType": "string",
+          "Exposure": "public"
+        }
+      ]
     }
+  ],
+  "RequiresVersion": 0,
+  "DHTConfig": {
+    "HashType": "sha2-256",
+    "NeighborhoodSize": 0
+  },
+  "Progenitor": {
+    "Identity": "",
+    "PubKey": null
+  }
 }

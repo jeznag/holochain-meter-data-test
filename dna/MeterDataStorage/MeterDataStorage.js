@@ -1,5 +1,19 @@
 "use strict";
 
+function anchor(anchorType, anchorText) {
+  var anchorHash = JSON.parse(
+    call(
+      "anchors",
+      "anchor",
+      JSON.stringify({
+        anchorType: anchorType,
+        anchorText: anchorText
+      })
+    )
+  );
+  return anchorHash;
+}
+
 // -----------------------------------------------------------------
 //  Exposed functions with custom logic https://developer.holochain.org/API_reference
 // -----------------------------------------------------------------
@@ -10,8 +24,26 @@ function meterDataCreate(meterDatum) {
   );
   if (meterDatum.batchData) {
     var startTime = new Date();
+    var hasPrinted = false;
     meterDatum.batchData.forEach(function(datum) {
-      return commit("meter_data", datum);
+      var meterID = datum.meter_id;
+      var anchorHash = anchor("meter", meterID);
+      if (meterID === "1" && !hasPrinted) {
+        debug("YOYOYO creating anchor");
+        debug(anchorHash);
+        hasPrinted = true;
+      }
+      var dataHash = commit("meter_data", datum);
+      var linkHash = commit("meter_to_meter_data_link", {
+        Links: [
+          {
+            Base: anchorHash,
+            Link: dataHash,
+            Tag: "meter_data"
+          }
+        ]
+      });
+      return dataHash;
     });
 
     var duration = new Date() - startTime;
@@ -33,71 +65,12 @@ function performQuery(type, queryOptions) {
 
 function meterDataRead(queryData) {
   debug("receiving read " + JSON.stringify(queryData));
-  var startTimeForRequest = new Date();
-
-  var meterID = queryData.meter_id;
-  var startTimeStamp = queryData.start_timestamp;
-  var endTimeStamp = queryData.end_timestamp;
-
-  var allDataForMeter = performQuery('constraints', {
+  return performQuery("no constraint", {
     Return: { Entries: true },
-    Constrain: {
-      EntryTypes: ["meter_data"],
-      Contains: JSON.stringify({
-        meter_id: meterID
-      })
-    }
-  });
-  performQuery('hashes', {
-    Return: { Hashes: true },
-    Constrain: {
-      EntryTypes: ["meter_data"],
-      Contains: JSON.stringify({
-        meter_id: meterID
-      })
-    }
-  });
-  performQuery('no constraint', {
-    Return: { Hashes: true },
     Constrain: {
       EntryTypes: ["meter_data"]
     }
   });
-  performQuery('everything', {
-    Return: { Hashes: true }
-  });
-
-  var queryFinishedTimeStamp = new Date();
-  var queryDuration = queryFinishedTimeStamp - startTimeForRequest;
-  debug("Query took " + queryDuration + " ms");
-
-  debug("all data" + allDataForMeter.length);
-
-  var endTimeStampDate = new Date(endTimeStamp);
-  var startTimeStampDate = new Date(startTimeStamp);
-  var queryResult = allDataForMeter.filter(function(datum) {
-    var dateVersionOfTimeStamp = new Date(datum.timestamp);
-    var withinTimeRange =
-      dateVersionOfTimeStamp <= endTimeStampDate &&
-      dateVersionOfTimeStamp >= startTimeStampDate;
-
-    if (!withinTimeRange) {
-      debug(
-        dateVersionOfTimeStamp +
-          " " +
-          (dateVersionOfTimeStamp <= endTimeStampDate) +
-          (dateVersionOfTimeStamp >= startTimeStampDate)
-      );
-    }
-    return withinTimeRange;
-  });
-
-  var processingTimeStamp = new Date();
-  var processingDuration = processingTimeStamp - queryFinishedTimeStamp;
-  debug("Processing took " + processingDuration + " ms");
-  debug("Total duration" + (processingTimeStamp - startTimeForRequest) + "ms");
-  debug("Found " + queryResult.length);
-  return queryResult;
 }
 
 function meter_Create(params) {
@@ -142,7 +115,13 @@ function validateCommit(entryName, entry, header, pkg, sources) {
       // do not just flip this to true without considering what that means
       // the action will ONLY be successful if this returns true, so watch out!
       return true;
+    case "meter_to_meter_data_link":
+      // be sure to consider many edge cases for validating
+      // do not just flip this to true without considering what that means
+      // the action will ONLY be successful if this returns true, so watch out!
+      return true;
     default:
+      debug(arguments);
       // invalid entry name
       return false;
   }

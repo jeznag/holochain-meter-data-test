@@ -19289,24 +19289,6 @@ let processedData = rawData.data.reduce((result, energyData) => {
   return updatedResult;
 }, {});
 
-for (let i = 0; i < 5; i++) {
-  Object.keys(processedData).forEach(meterKey => {
-    const dataForMeter = processedData[meterKey];
-    const extraData = [];
-    dataForMeter.forEach(datum => {
-      const updatedDate = new Date(datum.timestamp);
-      updatedDate.setMonth(updatedDate.getMonth() + 1);
-      extraData.push(
-        Object.assign({}, datum, {
-          timestamp: updatedDate.toISOString(),
-          power_consumed_kwh: datum.power_consumed_kwh * Math.random() * 20
-        })
-      );
-    });
-    processedData[meterKey] = dataForMeter.concat(extraData);
-  });
-}
-
 const request = require("request");
 
 Object.keys(processedData).forEach(meterKey => {
