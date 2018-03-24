@@ -1,108 +1,74 @@
 <html>
   <head>
     <script type="text/javascript" src="/meterData.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.22/c3.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.22/c3.js"></script>
   </head>
   <body>
-    <div id="worlds">
-    </div>
-    <form>
-      <label for="world">World</label>
-      <br />
-      <input type="text" id="world" size="50" placeholder="The world to which you're saying hello" />
-      <br />
-      <label for="entry">Entry</label>
-      <br />
-      <input type="text" id="holoWorldEntry" size="50" placeholder="This text will be saved in Holochain" />
-      <button type="submit" id="submitEntry">Submit</button>
-    </form>
+    <h1>Top Buildings</h1>
+    <table id="buildingRankTable">
+      <thead>
+        <tr>
+          <th>Building</th>
+          <th>Average electricity cost per sq. meter per day</th>
+          <th>Average Occupant Comfort Rating</th>
+        </tr>
+      </thead>
+      <tbody>
 
-    <form>
-      <p>Press the Read button and the hash key will be used to retrieve the entry</p>
-      <table id="entries">
-        <thead>
-          <tr>
-            <th>World</th>
-            <th>Hash</th>
-            <th>Message</th>
-          </tr>
-        </thead>
-        <tbody>
+      </tbody>
+    </table>
 
-        </tbody>
-      </table>
-    </form>
+    <div id="chart"></div>
 
     <script type="text/javascript">
-      function updateWorlds() {
-        holoWorldsGetAll((data) => {
-          const worldsContainer = document.querySelector('#worlds');
-          const parsedData  = JSON.parse(data || '[]');
-          worldsContainer.innerHTML = parsedData.map(datum =>
-            `<button data-world-hash="${datum.Hash}" data-world-name="${datum.Tag}">View messages for ${datum.Tag}</button>`
-          ).join('<br />');
-          worldsContainer.querySelectorAll('[data-world-hash]').forEach((worldButton) => {
-            worldButton.addEventListener('click', (e) => {
-              const worldName = e.target.getAttribute('data-world-name');
-              document.querySelector('#entries tbody').innerHTML = '';
-              holoWorldEntryGetAll(worldName, (entries) => {
-                entries.forEach((entry) => {
-                  addNewRow(worldName, entry.Hash);
-                })
-              });
-            });
-          })
-        });
+      const BUILDING_NAMES = {
+        '1': '44 Blackburn St',
+        '2': '52 Harrington Rd',
+        '3': '27 Northborne St',
+        '4': '13 Waterbird Avenue',
+        '5': '8 George Street',
+        '6': '15 Collingwood Avenue'
       }
-
-      updateWorlds();
-
-      document.querySelector('#world').addEventListener('change', function (e) {
-        const world = e.target.value;
-        holoWorldAddWorld(world, (data) => {
-          // update list of worlds
-          updateWorlds();
+      meterDataRead((rawData) => {
+        const processedData = processData(rawData);
+        const xValues = Object.entries(processedData).map(([buildingID, data]) => {
+          return ['x'].concat(data.data.map((datum) => new Date(datum.timestamp)));
+        });
+        const dataForChart = Object.entries(processedData).map(([buildingID, data]) => {
+          const dataForC3 = [BUILDING_NAMES[buildingID]];
+          return dataForC3.concat(data.data.map((datum) => datum.power_consumed_kwh));
+        });
+        debugger;
+        const chart = c3.generate({
+          bindto: '#chart',
+          data: {
+            x: 'x',
+            columns: xValues.concat(dataForChart)
+          },
+          axis: {
+            x: {
+              type: 'timeseries',
+              tick: {
+                format: '%Y-%m-%d'
+              }
+            }
+          }
+        });
+        const buildingsRankedByElectricityUsage = Object.keys(processedData).slice().sort((a, b) => {
+          return b.averageUsagePerDay - a.averageUsagePerDay;
+        });
+        const tableBodyEl = document.querySelector('#buildingRankTable tbody');
+        buildingsRankedByElectricityUsage.forEach((buildingID) => {
+          const buildingData = processedData[buildingID];
+          tableBodyEl.innerHTML += `<tr>
+            <td>${BUILDING_NAMES[buildingID]}</td>
+            <td>${buildingData.averageSpendPerDay}</td>
+            <td>TODO</td>
+          </tr>`;
         });
       });
-
-      document.querySelector('#submitEntry').addEventListener("click", function(event) {
-          event.preventDefault();
-          processAddNewEntry(event);
-      });
-
-      function processAddNewEntry(event) {
-        const entryInput = document.querySelector('#holoWorldEntry');
-        const worldInput = document.querySelector('#world');
-        holoWorldEntryCreate(entryInput.value, worldInput.value, function (hash) {
-          addNewRow(worldInput.value, hash)
-        });
-      }
-
-      function addNewRow(worldValue, hash) {
-
-        const table = document.querySelector('#entries tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td>${worldValue}</td>
-            <td>
-              <input type="text" data-type="hash" size="80" value="${hash}" />
-            </td>
-            <td>
-              <input type="text" data-type="entryContent" size="90" />
-              <button type="submit">Read</button>
-            </td>
-          `;
-        table.appendChild(newRow);
-
-        const hashInput = newRow.querySelector('[data-type="hash"]');
-
-        newRow.querySelector('[type="submit"]').addEventListener("click", function (event) {
-          event.preventDefault();
-          const parent = event.target.parentElement.parentElement;
-          holoWorldEntryRead(parent.querySelector('[data-type="hash"]').value, function (task) {
-            parent.querySelector('[data-type="entryContent"]').value = `${task.content} - ${task.timestamp}`;
-          })
-        });
-      }
-  </script>
+    </script>
   </body>
 </html>
