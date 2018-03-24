@@ -19270,7 +19270,9 @@ const rawData = {
   ]
 };
 
-let processedData = rawData.data.reduce((result, energyData) => {
+const restrictedData = rawData.data.slice(0, 2000);
+
+let processedData = restrictedData.reduce((result, energyData) => {
   const realPowerData = energyData.eReal;
   const recordedAt = new Date(energyData.timestamp * 1000);
   const updatedResult = Object.assign({}, result);
