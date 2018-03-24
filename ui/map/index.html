@@ -48,6 +48,9 @@
         .hidden {
             display: none;
         }
+        .buildingWrapper {
+            cursor: pointer;
+        }
     </style>
 
     <script>
@@ -60,9 +63,14 @@
             document.getElementById('buildingEnergy').innerHTML = energy;
         }
 
+        function calculate() {
+            document.getElementById('estimatedBillLabel').innerHTML = "Your estimated bill: ";
+            document.getElementById('estimatedBillValue').innerHTML = "$423.43 per month";
+        }
+
         function building1() {
             setBuildingDetails(
-                "8 King St<br/>Sydney NSW 2000",
+                "8 King St<br/>Sydney NSW 2000<br/>300m²",
                 "120",
                 "★★★ NABERS rating"
             );
@@ -70,14 +78,14 @@
 
         function building2() {
             setBuildingDetails(
-                "3 Pitt St<br/>Sydney NSW 2000",
+                "3 Pitt St<br/>Sydney NSW 2000<br/>400m²",
                 "80",
                 "★★★★★ NABERS rating"
             );
         }
         function building3() {
             setBuildingDetails(
-                "5 Margaret St<br/>Sydney NSW 2000",
+                "5 Margaret St<br/>Sydney NSW 2000<br/>350m²",
                 "85",
                 "NABERS rating unavailable"
             );
@@ -128,17 +136,17 @@
                     <p>Click a building on the map to learn more about its energy efficiency.</p>
                     <div class="col-lg-6" style="margin-right: 20px;">
                         <div style='background-image: url("map.png"); width: 578px; height: 577px;'>
-                            <div onclick="building1()" style="position: absolute; left: 48%; top: 50%">
+                            <div class="buildingWrapper" onclick="building1()" style="position: absolute; left: 48%; top: 50%">
                                 8 King St
                                 <div class="orange circle">
                                 </div>
                             </div>
-                            <div onclick="building2()" style="position: absolute; left: 58%; top: 60%">
+                            <div class="buildingWrapper" onclick="building2()" style="position: absolute; left: 58%; top: 60%">
                                 3 Pitt St
                                 <div class="green circle">
                                 </div>
                             </div>
-                            <div onclick="building3()" style="position: absolute; left: 60%; top: 80%">
+                            <div class="buildingWrapper" onclick="building3()" style="position: absolute; left: 60%; top: 80%">
                                 5 Margaret St
                                 <div class="green circle">
                                 </div>
@@ -155,9 +163,55 @@
                                         From 2014 to 2018, this building used an average of <span id="buildingEnergy"></span> kwH per square meter per day.
                                     </p>
                                     <p id="buildingRating"></p>
-                                    <button type="button" class="btn btn-success">Calculate your potential electricity bill</button>
+                                    <br/><br/>
+                                    <!-- Button trigger modal -->
+                                    <button class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                                        Calculate your potential electricity bill
+                                    </button>
                                     <br/><br/>
                                     <button type="button" class="btn btn-success">More details about the building</button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                    <h4 class="modal-title" id="myModalLabel">Calculate your bill</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="disabledSelect">Address</label>
+                                                        <input class="form-control" id="disabledInput" value="8 King St Sydney NSW 2000" type="text" placeholder="Disabled input" disabled="">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="disabledSelect">Floor space</label>
+                                                        <input class="form-control" id="disabledInput" value="300m²" type="text" placeholder="Disabled input" disabled="">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Number of computers</label>
+                                                        <input class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Average number of hours per week the area is occupied.</label>
+                                                        <input class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label id="estimatedBillLabel"></label>
+                                                        <p class="form-control-static" id="estimatedBillValue"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    <button onclick="calculate()" type="button" class="btn btn-primary">Calculate</button>
+                                                </div>
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                    <!-- /.modal -->
+                                    <br/><br/>
+                                    Reviews here......
                                 </div>
                             </div>
                         </div>
