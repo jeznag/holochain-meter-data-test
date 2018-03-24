@@ -16,9 +16,9 @@ function meterDataCreate(powerConsumed, meterID, timeStamp, callback) {
   xhr.send(data);
 }
 
-function meterDataRead(hash, callback) {
+function meterDataRead(callback) {
   var xhr = new XMLHttpRequest();
-  var url = "/fn/MeterData/meterDataCreate";
+  var url = "/fn/MeterData/meterDataRead";
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.onreadystatechange = function() {
@@ -26,6 +26,6 @@ function meterDataRead(hash, callback) {
       callback(JSON.parse(xhr.responseText));
     }
   };
-  var data = JSON.stringify({ hash: hash });
+  var data = JSON.stringify({});
   xhr.send(data);
 }
