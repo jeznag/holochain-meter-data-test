@@ -45,29 +45,23 @@
         	width: 12px;
         	height: 12px;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 
     <script>
-        function createBuildingDetails(name, energy, rating) {
-            return `
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        ${name}
-                    </div>
-                    <div class="panel-body">
-                        <p>From 2014 to 2018, this building used an average of ${energy} kwH per square meter per day</p>
-                        <p>${rating}</p>
-                        <br/>
-                        <button type="button" class="btn btn-success">Calculate your potential electricity bill</button>
-                        <br/><br/>
-                        <button type="button" class="btn btn-success">More details about the building</button>
-                    </div>
-                </div>
-            `;
+        function setBuildingDetails(name, energy, rating) {
+            var element = document.getElementById('buildingDetails');
 
+            element.className = element.className.replace(/\hidden\b/g, "");
+            document.getElementById('buildingHeading').innerHTML = name;
+            document.getElementById('buildingRating').innerHTML = rating;
+            document.getElementById('buildingEnergy').innerHTML = energy;
         }
+
         function building1() {
-            document.getElementById('buildingDetails').innerHTML = createBuildingDetails(
+            setBuildingDetails(
                 "8 King St<br/>Sydney NSW 2000",
                 "120",
                 "★★★ NABERS rating"
@@ -75,14 +69,14 @@
         }
 
         function building2() {
-            document.getElementById('buildingDetails').innerHTML = createBuildingDetails(
+            setBuildingDetails(
                 "3 Pitt St<br/>Sydney NSW 2000",
                 "80",
                 "★★★★★ NABERS rating"
             );
         }
         function building3() {
-            document.getElementById('buildingDetails').innerHTML = createBuildingDetails(
+            setBuildingDetails(
                 "5 Margaret St<br/>Sydney NSW 2000",
                 "85",
                 "NABERS rating unavailable"
@@ -132,7 +126,7 @@
             <div class="row">
                     <h1 class="page-header">Map</h1>
                     <p>Click a building on the map to learn more about its energy efficiency.</p>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6" style="margin-right: 20px;">
                         <div style='background-image: url("map.png"); width: 578px; height: 577px;'>
                             <div onclick="building1()" style="position: absolute; left: 48%; top: 50%">
                                 8 King St
@@ -150,10 +144,22 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <img src="/pages/map.png" /> -->
                     </div>
                     <div class="col-lg-4">
-                        <div id="buildingDetails">
+                        <div id="buildingDetails" class="hidden">
+                            <div class="panel panel-default">
+                                <div id="buildingHeading" class="panel-heading">
+                                </div>
+                                <div class="panel-body">
+                                    <p>
+                                        From 2014 to 2018, this building used an average of <span id="buildingEnergy"></span> kwH per square meter per day.
+                                    </p>
+                                    <p id="buildingRating"></p>
+                                    <button type="button" class="btn btn-success">Calculate your potential electricity bill</button>
+                                    <br/><br/>
+                                    <button type="button" class="btn btn-success">More details about the building</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 <!-- /.col-lg-12 -->
