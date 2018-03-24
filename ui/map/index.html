@@ -34,25 +34,59 @@
     <![endif]-->
 
     <style>
+        .orange.circle {
+            background-color: orange;
+        }
+        .green.circle {
+            background-color: green;
+        }
         .circle {
         	border-radius: 50%;
         	width: 12px;
         	height: 12px;
-            background-color: green;
-        	/* width and height can be anything, as long as they're equal */
         }
     </style>
 
     <script>
+        function createBuildingDetails(name, energy, rating) {
+            return `
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ${name}
+                    </div>
+                    <div class="panel-body">
+                        <p>From 2014 to 2018, this building used an average of ${energy} kwH per square meter per day</p>
+                        <p>${rating}</p>
+                        <br/>
+                        <button type="button" class="btn btn-success">Calculate your potential electricity bill</button>
+                        <br/><br/>
+                        <button type="button" class="btn btn-success">More details about the building</button>
+                    </div>
+                </div>
+            `;
+
+        }
         function building1() {
-            document.getElementById('buildingDetails').innerHTML = "building details 1";
+            document.getElementById('buildingDetails').innerHTML = createBuildingDetails(
+                "8 King St<br/>Sydney NSW 2000",
+                "120",
+                "★★★ NABERS rating"
+            );
         }
 
         function building2() {
-            document.getElementById('buildingDetails').innerHTML = "building details 2";
+            document.getElementById('buildingDetails').innerHTML = createBuildingDetails(
+                "3 Pitt St<br/>Sydney NSW 2000",
+                "80",
+                "★★★★★ NABERS rating"
+            );
         }
         function building3() {
-            document.getElementById('buildingDetails').innerHTML = "building details 3";
+            document.getElementById('buildingDetails').innerHTML = createBuildingDetails(
+                "5 Margaret St<br/>Sydney NSW 2000",
+                "85",
+                "NABERS rating unavailable"
+            );
         }
     </script>
 
@@ -97,27 +131,28 @@
         <div id="page-wrapper">
             <div class="row">
                     <h1 class="page-header">Map</h1>
+                    <p>Click a building on the map to learn more about its energy efficiency.</p>
                     <div class="col-lg-6">
                         <div style='background-image: url("map.png"); width: 578px; height: 577px;'>
                             <div onclick="building1()" style="position: absolute; left: 48%; top: 50%">
                                 8 King St
-                                <div class="circle">
+                                <div class="orange circle">
                                 </div>
                             </div>
                             <div onclick="building2()" style="position: absolute; left: 58%; top: 60%">
                                 3 Pitt St
-                                <div class="circle">
+                                <div class="green circle">
                                 </div>
                             </div>
                             <div onclick="building3()" style="position: absolute; left: 60%; top: 80%">
                                 5 Margaret St
-                                <div class="circle">
+                                <div class="green circle">
                                 </div>
                             </div>
                         </div>
                         <!-- <img src="/pages/map.png" /> -->
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div id="buildingDetails">
                         </div>
                     </div>
