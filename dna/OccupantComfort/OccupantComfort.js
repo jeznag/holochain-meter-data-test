@@ -18,39 +18,12 @@ function anchor(anchorType, anchorText) {
 //  Exposed functions with custom logic https://developer.holochain.org/API_reference
 // -----------------------------------------------------------------
 
-function meterDataCreate(meterDatum) {
-  debug(
-    "receiving create " + (meterDatum.batchData && meterDatum.batchData.length)
-  );
-  if (meterDatum.batchData) {
-    var startTime = new Date();
-    var hasPrinted = false;
-    meterDatum.batchData.forEach(function(datum) {
-      var meterID = datum.meter_id;
-      var anchorHash = anchor("meter", meterID);
-      if (meterID === "1" && !hasPrinted) {
-        debug("YOYOYO creating anchor");
-        debug(anchorHash);
-        hasPrinted = true;
-      }
-      var dataHash = commit("meter_data", datum);
-      var linkHash = commit("meter_to_meter_data_link", {
-        Links: [
-          {
-            Base: anchorHash,
-            Link: dataHash,
-            Tag: "meter_data"
-          }
-        ]
-      });
-      return dataHash;
-    });
-
-    var duration = new Date() - startTime;
-    debug("finished committing!" + duration);
-    return { status: "Complete!" };
-  } else {
-    return commit("meter_data", meterDatum);
+function comfortRatingCreate(comfortRatingEntry) {
+  debug("receiving create " + JSON.stringify(comfortRatingEntry));
+  try {
+    return commit("comfort_rating", comfortRatingEntry);
+  } catch (e) {
+    console.log(JSON.stringify(e));
   }
 }
 
@@ -63,31 +36,14 @@ function performQuery(type, queryOptions) {
   return result;
 }
 
-function meterDataRead(queryData) {
+function comfortRatingsRead(queryData) {
   debug("receiving read " + JSON.stringify(queryData));
-
-  var anchorHash = anchor("meter", queryData.meterID);
-  debug("anchor hash!!");
-  var allDataForMeter = getLinks(anchorHash, "", { Load: true });
-  debug("all data based on meter");
-  debug(allDataForMeter);
-
   return performQuery("no constraint", {
     Return: { Entries: true },
     Constrain: {
-      EntryTypes: ["meter_data"]
+      EntryTypes: ["comfort_rating"]
     }
   });
-}
-
-function meter_Create(params) {
-  // your custom code here
-  return {};
-}
-
-function meter_Read(params) {
-  // your custom code here
-  return {};
 }
 
 // -----------------------------------------------------------------
@@ -117,18 +73,17 @@ function genesis() {
  */
 function validateCommit(entryName, entry, header, pkg, sources) {
   switch (entryName) {
-    case "meter_data":
+    case "comfort_rating":
       // be sure to consider many edge cases for validating
       // do not just flip this to true without considering what that means
       // the action will ONLY be successful if this returns true, so watch out!
       return true;
-    case "meter_to_meter_data_link":
+    case "meter_to_comfort_rating_link":
       // be sure to consider many edge cases for validating
       // do not just flip this to true without considering what that means
       // the action will ONLY be successful if this returns true, so watch out!
       return true;
     default:
-      debug(arguments);
       // invalid entry name
       return false;
   }
@@ -145,18 +100,12 @@ function validateCommit(entryName, entry, header, pkg, sources) {
  */
 function validatePut(entryName, entry, header, pkg, sources) {
   switch (entryName) {
-    case "meter_data":
+    case "comfort_rating":
       // be sure to consider many edge cases for validating
       // do not just flip this to true without considering what that means
-      // the action will ONLY be successful if this returns true, so watch out!
-      return true;
-    case "meter_to_meter_data_link":
-      // be sure to consider many edge cases for validating
-      // do not just flip this to true without considering what that means
-      // the action will ONLY be successful if this returns true, so watch out!
+      // the action will ONLY be successfull if this returns true, so watch out!
       return true;
     default:
-      debug("fail!" + entryName);
       // invalid entry name
       return false;
   }
@@ -174,7 +123,7 @@ function validatePut(entryName, entry, header, pkg, sources) {
  */
 function validateMod(entryName, entry, header, replaces, pkg, sources) {
   switch (entryName) {
-    case "meter_data":
+    case "comfort_rating":
       // be sure to consider many edge cases for validating
       // do not just flip this to true without considering what that means
       // the action will ONLY be successfull if this returns true, so watch out!
@@ -217,13 +166,12 @@ function validateDel(entryName, hash, pkg, sources) {
  */
 function validateLink(entryName, baseHash, links, pkg, sources) {
   switch (entryName) {
-    case "meter_to_meter_data_link":
+    case "meter_to_comfort_rating_link":
       // be sure to consider many edge cases for validating
       // do not just flip this to true without considering what that means
       // the action will ONLY be successfull if this returns true, so watch out!
       return true;
     default:
-      debug("fail!" + entryName);
       // invalid entry name
       return false;
   }

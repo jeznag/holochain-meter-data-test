@@ -12,6 +12,39 @@
   },
   "Zomes": [
     {
+      "Name": "OccupantComfort",
+      "Description": "",
+      "CodeFile": "OccupantComfort.js",
+      "Entries": [
+        {
+          "Name": "comfort_rating",
+          "DataFormat": "json",
+          "SchemaFile": "comfort_rating_schema.json",
+          "Sharing": "public"
+        },
+        {
+          "Name": "meter_to_comfort_rating_link",
+          "DataFormat": "links"
+        }
+      ],
+      "RibosomeType": "js",
+      "Functions": [
+        {
+          "Name": "comfortRatingCreate",
+          "CallingType": "json",
+          "Exposure": "public"
+        },
+        {
+          "Name": "comfortRatingsRead",
+          "CallingType": "json",
+          "Exposure": "public"
+        }
+      ],
+      "BridgeFuncs": null,
+      "BridgeTo": "",
+      "Config": null
+    },
+    {
       "Name": "MeterDataStorage",
       "Description": "",
       "CodeFile": "MeterDataStorage.js",

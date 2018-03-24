@@ -19270,7 +19270,7 @@ const rawData = {
   ]
 };
 
-const restrictedData = rawData.data.slice(0, 2000);
+const restrictedData = rawData.data.slice(0, 500);
 
 let processedData = restrictedData.reduce((result, energyData) => {
   const realPowerData = energyData.eReal;

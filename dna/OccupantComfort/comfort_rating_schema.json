@@ -1,0 +1,19 @@
+{
+  "title": "Comfort Rating Schema",
+  "type": "object",
+  "properties": {
+    "rating": {
+      "type": "number"
+    },
+    "building_id": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  },
+  "required": ["building_id", "rating", "timestamp"]
+}
