@@ -6,7 +6,7 @@
   </head>
   <body>
     <h1>Top Buildings</h1>
-    <table id="buildingRankTable">
+    <table id="GreenRenterTable">
       <thead>
         <tr>
           <th>Building</th>
@@ -43,7 +43,7 @@
         const buildingsRankedByElectricityUsage = Object.keys(processedData).slice().sort((a, b) => {
           return processedData[a].averageUsagePerDay - processedData[b].averageUsagePerDay;
         });
-        const tableBodyEl = document.querySelector('#buildingRankTable tbody');
+        const tableBodyEl = document.querySelector('#GreenRenterTable tbody');
         buildingsRankedByElectricityUsage.forEach((buildingID) => {
           const buildingData = processedData[buildingID];
           tableBodyEl.innerHTML += `<tr>

@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "neat-csv": "^2.1.0",
+    "promised-csv": "^1.0.1",
     "request": "^2.85.0"
   }
 }

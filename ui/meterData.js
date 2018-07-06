@@ -18,36 +18,27 @@ function processData(data) {
     if (!result[meterID]) {
       result[meterID] = {
         totalEnergyKilowattHours: 0,
-        numThirtyMinuteDataPoints: 0,
+        numFifteenMinuteDataPoints: 0,
         data: []
       };
     }
 
-    const amplifiedConsumption =
-      Math.abs(datum.power_consumed_kwh) * Math.random() * 200;
-    // make the numbers a bit more similar
-    const cappedConsumption = parseFloat((Math.max(
-      Math.min(amplifiedConsumption, Math.random() * 80),
-      Math.random() * 20
-    )).toFixed(2));
-    result[meterID].totalEnergyKilowattHours += cappedConsumption;
-    result[meterID].numThirtyMinuteDataPoints += 1;
-    result[meterID].data.push(
-      Object.assign(datum, {
-        power_consumed_kwh: cappedConsumption
-      })
-    );
+    const consumption = datum.power_consumed_kwh;
+
+    result[meterID].totalEnergyKilowattHours += consumption;
+    result[meterID].numFifteenMinuteDataPoints += 1;
+    result[meterID].data.push(datum);
     return result;
   }, {});
 
   return Object.keys(processedData).reduce((result, meterID) => {
     const averageUsagePerDay =
-      Math.abs(processedData[meterID].totalEnergyKilowattHours) /
-      processedData[meterID].numThirtyMinuteDataPoints *
-      48;
+      (Math.abs(processedData[meterID].totalEnergyKilowattHours) /
+        processedData[meterID].numFifteenMinuteDataPoints) *
+      (24 * (60 / 15));
 
     result[meterID] = {
-      averageUsagePerDay: (averageUsagePerDay).toFixed(2),
+      averageUsagePerDay: averageUsagePerDay.toFixed(2),
       averageSpendPerDay: (averageUsagePerDay * 0.2).toFixed(2),
       data: processedData[meterID].data
     };
